@@ -1,9 +1,3 @@
-// const PIsao = arr => arr.reduce((total, numero) => total * Math.pow(numero.valor, numero.peso), 1)
-
-// const somaPeso = arr => arr.reduce((total, numero) => total + numero.peso, 0)
-
-// const G = arr => Math.pow(PIsao(arr), 1 / somaPeso(arr))
-
 const calcMedia = arr => arr.reduce((total, numero) => total + numero, 0) / arr.length
 
 const ordenar = arr => [...arr].sort((a, b) => a - b)
@@ -53,7 +47,7 @@ const calcNumeroClasse = arr => Math.round(1 + 3.22 * Math.log10(arr.length))
 
 const calcAmplitudeIntervaloClasse = (amplitude, numeroClasse) => Math.ceil(amplitude / numeroClasse)
 
-const calcDistribuicaoFrequencia = (ordenado, amplitude) => {
+const calcDistribuicaoFrequencia = (ordenado, amplitude, precisao = 2) => {
     const K = calcNumeroClasse(ordenado)
 
     const h = calcAmplitudeIntervaloClasse(amplitude, K)
@@ -68,8 +62,8 @@ const calcDistribuicaoFrequencia = (ordenado, amplitude) => {
             first + (index + 1) * h
         ])
         .map(el => ({
-            intervalo: el,
-            xi: calcMedia(el),
+            intervalo: el.join(" -| "),
+            xi: calcMedia(el).toFixed(precisao),
             Fi: ordenado.filter(num => num >= el[0] && num < el[1]).length
         }))
         .map((el, index, arr) => {
@@ -77,70 +71,28 @@ const calcDistribuicaoFrequencia = (ordenado, amplitude) => {
                 0
                 : arr.reduce((total, subEl, subIndex) => subIndex < index ?
                     total + subEl.Fi
-                    : total, 0))
+                    : total, 0)).toFixed(precisao)
 
             return ({
                 ...el,
-                fi: 100 * el.Fi / ordenado.length,
+                fi: (100 * el.Fi / ordenado.length).toFixed(precisao),
                 Fac,
-                FacR: 100 * Fac / ordenado.length
+                FacR: (100 * Fac / ordenado.length).toFixed(precisao)
             })
         })
 }
 
-// let arr = process.argv
-//     .filter((el, index) => index > 1)
-
-// const convertToNumber = num => typeof num === "number" ? num : parseFloat(num)
-
-// try {
-//     const inputJSON = require(arr[0])
-
-//     if (arr[1]) {
-//         arr = inputJSON.map(el => convertToNumber(el[arr[1]]))
-//     }
-//     else {
-//         arr = inputJSON.map(convertToNumber)
-//     }
-// }
-// catch (error) {
-//     arr = arr.map(convertToNumber)
-// }
-
-// const m = calcMedia(arr)
-
-// const ordenado = ordenar(arr)
-
-// const amplitude = calcAmplitude(ordenado)
-
-// const variancia = calcVariancia(arr, m, false)
-
-// const varianciaAmostral = calcVariancia(arr, m, true)
-
-// console.log(JSON.stringify(calcDistribuicaoFrequencia(ordenado, amplitude), null, 2))
-
-// console.log(`quantidade de números: ${arr.length}`)
-
-// console.log(`amplitude: ${amplitude}`)
-
-// console.log(`média: ${m.toFixed(2)}`)
-
-// console.log(`moda: ${calcModa(arr)}`)
-
-// console.log(`mediana: ${calcMediana(ordenado)}`)
-
-// console.log(`variância: ${variancia.toFixed(2)}`)
-
-// console.log(`desvio padrão: ${calcDesvioPadrao(arr, m, variancia).toFixed(2)}`)
-
-// console.log(`coeficiente de variação: ${calcCoeficienteVariacao(arr, m, variancia).toFixed(2)}%`)
-
-// console.log(`variância amostral: ${varianciaAmostral.toFixed(2)}`)
-
-// console.log(`desvio padrão amostral: ${calcDesvioPadrao(arr, m, varianciaAmostral).toFixed(2)}`)
-
-// console.log(`coeficiente de variação amostral: ${calcCoeficienteVariacao(arr, m, varianciaAmostral).toFixed(2)}%`)
+const processArr = input => input
+    .split(" ")
+    .map(num => parseFloat(num))
 
 module.exports = {
+    ordenar,
+    calcVariancia,
+    calcAmplitude,
+    calcMediana,
+    processArr,
+    calcModa,
+    calcCoeficienteVariacao,
     calcDistribuicaoFrequencia
 }
