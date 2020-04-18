@@ -6,9 +6,10 @@ import { Container, Row, Col } from 'react-bootstrap'
 import NumerosForm from './NumerosForm'
 import Tabela from './Tabela'
 import * as calc from "./calc"
+import deafultValues from "./deafault_values.json"
 
 const App = () => {
-  const [input, setInput] = useState([1, 2, 3, 4])
+  const [input, setInput] = useState(deafultValues)
 
   const [info, setInfo] = useState(null)
 
