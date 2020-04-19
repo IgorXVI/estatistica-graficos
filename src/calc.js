@@ -102,19 +102,42 @@ const calcDistribuicaoFrequencia = ({
                 total + subEl.Fi
                 : total, 0))
 
-        return ({
+        const result = {
             intervalo: el.intervalo.join(" -| "),
             Fi: el.Fi,
             xi: calcMedia(el.intervalo).toFixed(precisao),
             Fac,
             fi: (100 * el.Fi / comprimento).toFixed(precisao),
-            FacR: (100 * Fac / comprimento).toFixed(precisao)
-        })
+            FacR: (100 * Fac / comprimento).toFixed(precisao),
+        }
+
+        result.xiFi = (result.xi * result.Fi).toFixed(precisao)
+
+        return result
     })
 
     const somarElsAtts = attr => result.reduce((total, el) => total + parseFloat(el[attr]), 0)
-    
+
     const addPerc = value => `${value}%`
+
+    let fiTotal = somarElsAtts("fi")
+
+    const mudarFiTotal = tipo => {
+        const fis = result.map(el => parseFloat(el.fi))
+
+        const index = fis.indexOf(Math[tipo](...fis))
+
+        result[index].fi = (fis[index] + 100 - fiTotal).toFixed(precisao)
+
+        fiTotal = somarElsAtts("fi")
+    }
+
+    if (fiTotal < 100) {
+        mudarFiTotal("max")
+    }
+    else if (fiTotal > 100) {
+        mudarFiTotal("min")
+    }
 
     const foot = {
         intervalo: "Total",
@@ -122,7 +145,8 @@ const calcDistribuicaoFrequencia = ({
         xi: "-",
         Fac: "-",
         fi: addPerc(somarElsAtts("fi").toFixed(precisao)),
-        FacR: "-"
+        FacR: "-",
+        xiFi: somarElsAtts("xiFi").toFixed(precisao)
     }
 
     return result
@@ -140,7 +164,17 @@ const processArr = input => input
     .split(" ")
     .map(num => parseFloat(num))
 
+const mudancaPercentual = (arr = [], precisao = 2) => arr.reduce((hash, el, index) => {
+    if (index < arr.length - 1) {
+        const proximo = arr[index + 1]
+        hash[`${el} - ${proximo}`] = `${(100 * (proximo - el) / el).toFixed(precisao)}%`
+    }
+
+    return hash
+}, {})
+
 module.exports = {
+    mudancaPercentual,
     calcMediaGeometrica,
     calcDesvioPadrao,
     calcMedia,

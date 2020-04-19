@@ -5,7 +5,7 @@ import { JsonEditor as Editor } from 'jsoneditor-react'
 import 'jsoneditor-react/es/editor.min.css'
 
 const NumerosForm = props => {
-    const [mode, setMode] = useState(null)
+    const [mode, setMode] = useState("tree")
 
     let editor
     if (mode !== null) {
@@ -28,7 +28,7 @@ const NumerosForm = props => {
                     value={mode}
                     onClick={() => setMode(null)}
                     onChange={value => setMode(value)}>
-                    {['text', 'tree'].map((value, id) =>
+                    {['code', 'tree'].map((value, id) =>
                         <ToggleButton key={id} value={value}>{value}</ToggleButton>)}
                 </ToggleButtonGroup>
                 <Form.Row>
@@ -41,7 +41,7 @@ const NumerosForm = props => {
                         />
                     </Form.Group>
                     <Form.Group as={Col} controlId="format">
-                        <Form.Label>Função de formatação:</Form.Label>
+                        <Form.Label>Caractere para dividir a string (só funciona se os dados for uma string):</Form.Label>
                         <Form.Control
                             type="text"
                             value={props.formatValue}
@@ -51,7 +51,10 @@ const NumerosForm = props => {
                 </Form.Row>
 
                 <Form.Group controlId="button">
-                    <Button variant="primary" type="submit" onClick={e => {
+                    <Button 
+                    variant="primary" 
+                    type="submit" 
+                    onClick={e => {
                         e.preventDefault()
                         props.onButtonClick()
                     }}>Calcular</Button>
