@@ -58,7 +58,7 @@ const Graficos = () => {
   }
 
   const dados = getDados({
-    attr: "Computador",
+    attr: "Internet",
     dadosSorteados: dadosSorteados
   })
 
@@ -83,7 +83,7 @@ const Graficos = () => {
             data={[
               {
                 type: 'pie',
-                labels: x,
+                labels: x.map(v => v === "undefined" ? "Não" : "Sim"),
                 values: y,
                 line: { color: "green", width: 2 }
               },
