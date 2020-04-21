@@ -16,8 +16,8 @@ const Graficos = () => {
 
   const getDados = ({
     attr,
-    dadosSorteados
-  }) => dadosSorteados
+    dados
+  }) => dados
     .sort(sortByAttr(attr))
     .reduce((hash, el) => {
       if (!hash[el[attr]]) {
@@ -57,10 +57,14 @@ const Graficos = () => {
     }
   }
 
-  const dados = getDados({
-    attr: "Internet",
-    dadosSorteados: dadosSorteados
-  })
+  const dados = {
+    "145 -| 152": 2,
+    "152 -| 159": 7,
+    "159 -| 166": 15,
+    "166 -| 173": 10,
+    "173 -| 180": 6,
+    "180 -| 187": 2
+  }
 
   const {
     arr,
@@ -68,26 +72,32 @@ const Graficos = () => {
     y
   } = getArr({
     dados,
-    nomeX: "Tem computador?",
-    nomeY: "quantidade"
+    nomeX: "intervalo",
+    nomeY: "frequencia"
   })
 
-  console.log(x)
-  console.log(y)
+  const xString = x
+    .map(xi => xi.split(" -| ")[0])
+    .reduce((arr, subArr) => arr.concat(subArr), [])
+    .concat([
+      x[x.length - 1].split(" -| ")[1]
+    ])
+    .join("          .          ")
+
+  const chartData = x.map((xi, i) => ({
+    histfunc: "sum",
+    y: [y[i]],
+    x: [xString],
+    type: "histogram",
+    name: xi
+  }))
 
   return (
     <Container fluid="sm">
       <Row>
         <Col>
           <Plot
-            data={[
-              {
-                type: 'pie',
-                labels: x.map(v => v === "undefined" ? "Não" : "Sim"),
-                values: y,
-                line: { color: "green", width: 2 }
-              },
-            ]}
+            data={chartData}
             layout={{
               xaxis: {
                 tickmode: "linear"
