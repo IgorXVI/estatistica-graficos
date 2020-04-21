@@ -1,4 +1,4 @@
-const PIsao = arr => arr.reduce((total, numero) => total * Math.pow(numero.valor, numero.peso), 1)
+const somaLog = arr => arr.reduce((total, numero) => total + numero.peso * Math.log10(numero.valor), 0)
 
 const somaPeso = arr => arr.reduce((total, numero) => total + numero.peso, 0)
 
@@ -11,7 +11,7 @@ const calcMediaGeometrica = arr => {
         })
     )
 
-    return Math.pow(PIsao(trueArr), 1 / somaPeso(trueArr))
+    return Math.pow(10, (somaLog(trueArr) / somaPeso(trueArr)))
 }
 
 const calcMedia = arr => arr.reduce((total, numero) => total + numero, 0) / arr.length

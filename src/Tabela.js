@@ -16,7 +16,7 @@ const Tabela = props => {
     return (
         <div className="Tabela">
             <h2>{props.titulo}</h2>
-            <Table bordered hover>
+            <Table bordered hover size="sm" responsive="sm">
                 <thead className="number_table_header">
                     <tr>
                         {heads.map((key, index) => <th key={index}>{key}</th>)}
