@@ -4,6 +4,8 @@ import React from 'react'
 import { Container, Row, Col } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 
+import calc from './calc'
+
 import dadosSorteados from './dados/dados_sorteados.json'
 
 import Tabela from './Tabela'
@@ -76,21 +78,13 @@ const Graficos = () => {
     nomeY: "frequencia"
   })
 
-  const xString = x
-    .map(xi => xi.split(" -| ")[0])
-    .reduce((arr, subArr) => arr.concat(subArr), [])
-    .concat([
-      x[x.length - 1].split(" -| ")[1]
-    ])
-    .join("          .          ")
-
-  const chartData = x.map((xi, i) => ({
-    histfunc: "sum",
-    y: [y[i]],
-    x: [xString],
-    type: "histogram",
-    name: xi
-  }))
+  const chartData = [
+    {
+      mode: 'lines+markers',
+      y: y,
+      x: x.map(el => calc.calcMedia(el.split(" -| ").map(num => parseFloat(num))))
+    }
+  ]
 
   return (
     <Container fluid="sm">
