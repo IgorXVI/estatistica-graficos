@@ -59,14 +59,14 @@ const Graficos = () => {
     }
   }
 
-  const dados = {
-    "145 -| 152": 2,
-    "152 -| 159": 7,
-    "159 -| 166": 15,
-    "166 -| 173": 10,
-    "173 -| 180": 6,
-    "180 -| 187": 2
-  }
+  const dados = getDados({
+    attr: "AtividadeFisica",
+    dados: dadosSorteados
+      .map(el => {
+        el.AtividadeFisica = el.AtividadeFisica.toLocaleLowerCase()
+        return el
+      })
+  })
 
   const {
     arr,
@@ -74,15 +74,15 @@ const Graficos = () => {
     y
   } = getArr({
     dados,
-    nomeX: "intervalo",
-    nomeY: "frequencia"
+    nomeX: "Você fuma?",
+    nomeY: "Resposta"
   })
 
   const chartData = [
     {
-      mode: 'lines+markers',
-      y: y,
-      x: x.map(el => calc.calcMedia(el.split(" -| ").map(num => parseFloat(num))))
+      type: 'pie',
+      labels: x,
+      values: y
     }
   ]
 
