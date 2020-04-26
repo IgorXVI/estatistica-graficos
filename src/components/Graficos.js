@@ -4,9 +4,9 @@ import React from 'react'
 import { Container, Row, Col } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 
-import calc from './calc'
+// import * as calc from "../modules/calc"
 
-import dadosSorteados from './dados/dados_sorteados.json'
+import dadosSorteados from '../dados/dados_sorteados.json'
 
 import Tabela from './Tabela'
 

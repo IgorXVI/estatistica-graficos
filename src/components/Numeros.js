@@ -1,20 +1,30 @@
 import React from 'react'
 import { useState } from 'react'
-import { Container, Row, Col } from 'react-bootstrap'
+import { Row, Container, Button, Form, Col, ToggleButtonGroup, ToggleButton } from 'react-bootstrap'
+import { JsonEditor as Editor } from 'jsoneditor-react'
+import 'jsoneditor-react/es/editor.min.css'
 
-import NumerosForm from './NumerosForm'
 import Tabela from './Tabela'
-import * as calc from "./calc"
-import deafultValues from "./deafault_values.json"
+import * as calc from "../modules/calc"
 
 const Numeros = () => {
-  const [input, setInput] = useState(deafultValues)
+  const [input, setInput] = useState([
+    1,
+    1,
+    2,
+    3,
+    4
+  ])
 
   const [info, setInfo] = useState(null)
 
   const [precision, setPrecision] = useState(2)
 
   const [format, setFormat] = useState(",")
+
+  const [mode, setMode] = useState("tree")
+
+  const [tmode, setTMode] = useState("tree")
 
   const injectTabela = () => {
     if (input[0].intervalo !== undefined) {
@@ -65,8 +75,6 @@ const Numeros = () => {
 
       const mediaGeometrica = calc.calcMediaGeometrica(ordenado).toFixed(precision)
 
-      const mudancaPercentual = calc.mudancaPercentual(ordenado, precision)
-
       const max = ordenado[ordenado.length - 1]
 
       const min = ordenado[0]
@@ -82,7 +90,6 @@ const Numeros = () => {
         quartil2,
         max,
         min,
-        mudancaPercentual,
         mediaGeometrica,
         variancia,
         vairanciaAmostra,
@@ -102,14 +109,22 @@ const Numeros = () => {
 
   let tabela = null
   let tabelaResto = null
-  let tMudancaPercentual = null
+
+  let editor
+  if (mode !== null) {
+    editor = <Editor
+      id="JSONEditor"
+      mode={mode}
+      value={input}
+      onChange={setInput}
+    />
+  }
 
   if (info !== null) {
     const {
       min,
       max,
       distribuicaoFrequencia,
-      mudancaPercentual,
       mediaGeometrica,
       variancia,
       vairanciaAmostra,
@@ -149,31 +164,64 @@ const Numeros = () => {
       {}
     ]}></Tabela>
 
-    if (mudancaPercentual !== undefined) {
-      tMudancaPercentual = <Tabela titulo="Tabela de mudança percentual" arr={[
-        ...Object.keys(mudancaPercentual).map(valores => ({
-          valores,
-          "mudança": mudancaPercentual[valores]
-        })),
-        {}
-      ]}></Tabela>
-    }
-
   }
 
   return (
     <Container fluid="sm">
       <Row>
         <Col>
-          <NumerosForm
-            fieldValue={input}
-            onFieldInput={setInput}
-            onButtonClick={injectTabela}
-            onPrecisionInput={setPrecision}
-            precisionValue={precision}
-            formatValue={format}
-            onFormatInput={setFormat}>
-          </NumerosForm>
+          <Form>
+            <Form.Group controlId="numeros">
+              <Form.Label>Dados:</Form.Label>
+              {editor}
+            </Form.Group>
+            <ToggleButtonGroup type="radio" name="options" defaultValue={1}
+              value={mode}
+              onClick={() => setMode(null)}
+              onChange={value => setMode(value)}>
+              {['code', 'tree'].map((value, id) =>
+                <ToggleButton key={id} value={value}>{value}</ToggleButton>)}
+            </ToggleButtonGroup>
+            <Form.Row>
+              <Form.Group as={Col} controlId="precisao">
+                <Form.Label>Precisão:</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={precision}
+                  onInput={e => setPrecision(e.target.value)}
+                />
+              </Form.Group>
+              <Form.Group as={Col} controlId="format">
+                <Form.Label>Caractere para dividir a string (só funciona se os dados for uma string):</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={format}
+                  onInput={e => setFormat(e.target.value)}
+                />
+              </Form.Group>
+            </Form.Row>
+
+            <Form.Group controlId="button">
+              <Button
+                variant="primary"
+                type="submit"
+                onClick={e => {
+                  setTMode(mode)
+                  setMode(null)
+                  e.preventDefault()
+                  injectTabela()
+                }}
+                onMouseLeave={
+                  () => {
+                    if (mode === null) {
+                      setMode(tmode)
+                    }
+                  }
+                }
+              >Calcular</Button>
+            </Form.Group>
+
+          </Form>
         </Col>
       </Row>
       <Row>
@@ -181,9 +229,6 @@ const Numeros = () => {
       </Row>
       <Row>
         <Col>{tabela}</Col>
-      </Row>
-      <Row>
-        <Col>{tMudancaPercentual}</Col>
       </Row>
     </Container>
   )
