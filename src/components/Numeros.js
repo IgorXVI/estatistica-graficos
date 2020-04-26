@@ -5,6 +5,10 @@ import { JsonEditor as Editor } from 'jsoneditor-react'
 import 'jsoneditor-react/es/editor.min.css'
 
 import Tabela from './Tabela'
+import Histograma from './Histograma'
+import PoligonoFrequencias from './PoligonoFrequencias'
+import Ogiva from './Ogiva'
+
 import * as calc from "../modules/calc"
 
 const Numeros = () => {
@@ -85,7 +89,12 @@ const Numeros = () => {
       const quartil1 = calc.calcMediana(arrayFirstHalf).toFixed(precision)
       const quartil2 = calc.calcMediana(arraySecondHalf).toFixed(precision)
 
+      const lastDF = distribuicaoFrequencia[distribuicaoFrequencia.length - 1]
+      const mediaPonderada = (lastDF.xiFi / lastDF.Fi).toFixed(precision)
+
+
       setInfo({
+        mediaPonderada,
         quartil1,
         quartil2,
         max,
@@ -109,6 +118,9 @@ const Numeros = () => {
 
   let tabela = null
   let tabelaResto = null
+  let histograma = null
+  let poligonoFrequencia = null
+  let ogiva = null
 
   let editor
   if (mode !== null) {
@@ -122,6 +134,7 @@ const Numeros = () => {
 
   if (info !== null) {
     const {
+      mediaPonderada,
       min,
       max,
       distribuicaoFrequencia,
@@ -140,12 +153,33 @@ const Numeros = () => {
 
     tabela = <Tabela titulo="Tabela de distribuição de frequencias" arr={distribuicaoFrequencia}></Tabela>
 
+    const histogramaDados = distribuicaoFrequencia.reduce((hash, el, index) => {
+      if (index < distribuicaoFrequencia.length - 1) {
+        hash[el.intervalo] = el.Fi
+      }
+      return hash
+    }, {})
+
+    histograma = <Histograma dados={histogramaDados}></Histograma>
+
+    poligonoFrequencia = <PoligonoFrequencias dados={histogramaDados}></PoligonoFrequencias>
+
+    const ogivaDados = distribuicaoFrequencia.reduce((hash, el, index) => {
+      if (index < distribuicaoFrequencia.length - 1) {
+        hash[el.intervalo] = el.Fac
+      }
+      return hash
+    }, {})
+
+    ogiva = <Ogiva dados={ogivaDados}></Ogiva>
+
     const resto = {
-      mediana,
-      quartil1,
-      quartil2,
       media,
       "media geometrica": mediaGeometrica,
+      "media ponderada": mediaPonderada,
+      mediana,
+      "quartil 1": quartil1,
+      "quartil 2": quartil2,
       moda,
       variancia,
       "desvio padrão": desvioPadrao,
@@ -225,10 +259,15 @@ const Numeros = () => {
         </Col>
       </Row>
       <Row>
+        <Col>{tabela}</Col>
+      </Row>
+      <Row>
         <Col>{tabelaResto}</Col>
       </Row>
       <Row>
-        <Col>{tabela}</Col>
+        <Col>{histograma}</Col>
+        <Col>{poligonoFrequencia}</Col>
+        <Col>{ogiva}</Col>
       </Row>
     </Container>
   )
