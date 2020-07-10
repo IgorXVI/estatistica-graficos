@@ -134,6 +134,7 @@ const Numeros = () => {
 
   if (info !== null) {
     const {
+      amplitude,
       mediaPonderada,
       min,
       max,
@@ -187,7 +188,8 @@ const Numeros = () => {
       "desvio padrão da amostra": desvioPadraoAmostra,
       "coefieciente de variação da amostra": coeficienteVariacao,
       min,
-      max
+      max,
+      amplitude
     }
 
     tabelaResto = <Tabela titulo="Tabela de informações sobre os números" arr={[
